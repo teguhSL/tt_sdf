@@ -502,7 +502,7 @@ def init_pybullet_quadcopter(x0, x_target, obstacles, obj_rad = 0.15):
     '''
     p.resetSimulation()
 
-    quad_id = p.loadURDF("../../data/urdf/quadrotor.urdf",[0,0,0],p.getQuaternionFromEuler([0,0,0]))
+    quad_id = p.loadURDF("../data/urdf/quadrotor.urdf",[0,0,0],p.getQuaternionFromEuler([0,0,0]))
     _,_,obj_id = create_primitives(radius = obj_rad, rgbaColor=[1,1,1,0.5])    
     _,_,init_id = create_primitives(radius = 0.04, rgbaColor=[1,0,0,0.5])
     _,_,target_id = create_primitives(radius = 0.04, rgbaColor=[0,1,0,0.5])
