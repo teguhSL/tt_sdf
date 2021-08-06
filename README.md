@@ -2,25 +2,30 @@
 
 In this work, we use TT-SDF as an environment descriptor, to predict good initial trajectory for warm starting trajectory optimization. This repository contains the code for this work.
 
-## Installation Procedure ##
-Install pinocchio, crocoddyl, & tensorly:
+## Dependencies##
 ```bash
 conda install -c conda-forge crocoddyl
 conda install -c conda-forge pinocchio
 conda install -c tensorly tensorly
-```
-
-Install transforms3d:
-```bash
+conda install tensorflow tensorflow_probability
 pip install transforms3d
-```
-
-Install pybullet:
-```bash
 pip install pybullet
+pip install tqdm
+pip install pandas
+pip install trimesh
+pip install scikit-learn
+pip install casadi
+pip install scikit-image
+pip install pyrender
+pip install meshio
+pip install mesh-to-sdf
 ```
 
-Install tensorly:
+Install sdf:
+```bash
+see https://github.com/fogleman/sdf
+```
+
 
 ## How to use the codes ##
 For running the specific experiments in the paper, you can look at the following notebooks:
