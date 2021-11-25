@@ -39,37 +39,43 @@ def modify_obstacle(obstacle_ids, obstacles):
     obstacle_ids = create_obstacles(obstacles)
     return obstacle_ids
 
-def create_obstacles(obstacles):
+def create_obstacles(obstacles, colors = None):
     obstacle_ids = []
-    for obstacle in obstacles:
+    if colors is None: 
+        colors = [[1.,1.,0.,1.],[0.,1.,1.,1.], [1.,0.,1.,1.], [.7,.7,.7,1.], [.3,.3,0.3,1.]]
+    for i,obstacle in enumerate(obstacles):
         if 'obs_type' in list(obstacle.keys()):
             obs_type = obstacle['obs_type']
         else:
             obs_type = p.GEOM_SPHERE
         
         if obs_type == p.GEOM_SPHERE:
-            _,_,obs_id = create_primitives(obs_type, radius =obstacle['rad'], basePosition=np.zeros(3))
+            _,_,obs_id = create_primitives(obs_type, radius =obstacle['rad'], basePosition=np.zeros(3), rgbaColor=colors[i])
         elif obs_type == p.GEOM_BOX:
-            _,_,obs_id = create_primitives(obs_type, halfExtents=obstacle['halfExtents'], basePosition=np.zeros(3))
+            _,_,obs_id = create_primitives(obs_type, halfExtents=obstacle['halfExtents'], basePosition=np.zeros(3), rgbaColor=colors[i])
         elif obs_type == p.GEOM_CAPSULE:
-            _,_,obs_id = create_primitives(obs_type, radius=obstacle['rad'], length=obstacle['length'], basePosition=np.zeros(3))
+            _,_,obs_id = create_primitives(obs_type, radius=obstacle['rad'], length=obstacle['length'], basePosition=np.zeros(3), rgbaColor=colors[i])
             
         p.resetBasePositionAndOrientation(obs_id, obstacle['pos'], (0,0,0,1))    
         obstacle['obs_id'] = obs_id
         obstacle_ids.append(obs_id)
     return obstacle_ids
         
-def init_pybullet(x0, x_target, obstacles):
+def init_pybullet(x0, x_target, obstacles, model='pointmass', globalScaling=0.3, colors = None):
     '''
     Return: obj_id, init_id, target_id, border_id, obstacle_ids
     '''
     p.resetSimulation()
 
-    _,_,obj_id = create_primitives(rgbaColor=[0,0,1,1],radius = 0.04)
-    _,_,init_id = create_primitives(radius = 0.04, rgbaColor=[1,0,0,0.5])
-    _,_,target_id = create_primitives(radius = 0.04, rgbaColor=[0,1,0,0.5])
-    _,_,border_id = create_primitives(rgbaColor=[1,0,0,0.1], shapeType=p.GEOM_BOX, halfExtents=[1.,1.,1.])
-    obstacle_ids = create_obstacles(obstacles)
+    if model == 'pointmass':
+        _,_,obj_id = create_primitives(rgbaColor=[0,0,1,1],radius = 0.04)
+    elif model == 'quadcopter':
+        obj_id = p.loadURDF("../data/urdf/quadrotor.urdf",[0,0,0],p.getQuaternionFromEuler([0,0,0]), globalScaling=globalScaling)
+        
+    _,_,init_id = create_primitives(radius = 0.04, rgbaColor=[1,0,0,1.])
+    _,_,target_id = create_primitives(radius = 0.04, rgbaColor=[0,1,0,1.])
+    _,_,border_id = create_primitives(rgbaColor=[0,0,1,0.1], shapeType=p.GEOM_BOX, halfExtents=[1.,1.,1.])
+    obstacle_ids = create_obstacles(obstacles, colors)
     
     p.resetBasePositionAndOrientation(init_id, x0[:3], (0,0,0,1))
     p.resetBasePositionAndOrientation(target_id, x_target[:3], (0,0,0,1))
